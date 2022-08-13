@@ -7,9 +7,9 @@ var errors = map[ErrorCode]string{}
 type ErrorCode int
 
 type Error struct {
-	Code    ErrorCode   `json:"code"`
-	Message string      `json:"message"`
-	Details interface{} `json:"details,omitempty"`
+	code    ErrorCode
+	message string
+	details interface{}
 }
 
 func SetupMulti(codes map[ErrorCode]string) {
@@ -26,11 +26,23 @@ func Setup(code ErrorCode, msg string) {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("code: %d - err: %s", e.Code, e.Message)
+	return fmt.Sprintf("code: %d - err: %s", e.code, e.message)
+}
+
+func (e *Error) Code() ErrorCode {
+	return e.code
+}
+
+func (e *Error) Message() string {
+	return e.message
+}
+
+func (e *Error) Details() interface{} {
+	return e.details
 }
 
 func (e *Error) Is(code ErrorCode) bool {
-	return e.Code == code
+	return e.code == code
 }
 
 func Get(err error) (*Error, bool) {
@@ -53,13 +65,13 @@ func Code(code ErrorCode, msg ...string) *Error {
 	}
 
 	return &Error{
-		Code:    code,
-		Message: errMsg,
+		code:    code,
+		message: errMsg,
 	}
 }
 
 func Detailed(code ErrorCode, details interface{}, msg ...string) *Error {
 	err := Code(code, msg...)
-	err.Details = details
+	err.details = details
 	return err
 }
