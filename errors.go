@@ -10,29 +10,35 @@ const (
 )
 
 var (
-	errors = map[ErrorCode]string{
+	Default = map[ErrorCode]string{
 		AlreadyExists:  "registry already exists",
 		NotFound:       "not found",
 		InvalidRequest: "invalid request",
 		Internal:       "unexpected error has occurred",
 	}
+
+	errors = map[ErrorCode]string{}
 )
 
 type ErrorCode int
 
 type Error struct {
-	Code    ErrorCode
-	Message string
-	Details interface{}
+	Code    ErrorCode   `json:"code"`
+	Message string      `json:"message"`
+	Details interface{} `json:"details,omitempty"`
 }
 
-func Setup(code ErrorCode, msg string) error {
+func SetupMulti(codes map[ErrorCode]string) {
+	for code, msg := range codes {
+		Setup(code, msg)
+	}
+}
+
+func Setup(code ErrorCode, msg string) {
 	if _, ok := errors[code]; ok {
 		panic(fmt.Sprintf("error already exists %d", code))
 	}
-
 	errors[code] = msg
-	return nil
 }
 
 func (e *Error) Error() string {
