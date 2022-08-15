@@ -33,9 +33,9 @@ func (e *Error) Code() ErrorCode {
 	return e.code
 }
 
-func (e *Error) Message() string {
-	return e.message
-}
+// func (e *Error) Message() string {
+// 	return e.message
+// }
 
 func (e *Error) Details() interface{} {
 	return e.details
